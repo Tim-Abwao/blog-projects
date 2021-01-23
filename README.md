@@ -1,6 +1,6 @@
 # Blog Projects
 
-This is where the code for the projects from my [blog][1] live.
+This is where the code for the projects from my [blog][1] lives.
 
 For anyone interested in trying them out.
 
