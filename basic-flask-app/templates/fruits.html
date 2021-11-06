@@ -3,21 +3,18 @@
 
 <head>
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ title }}</title>
-  <style>
-    body  {
-      background: center / cover url("{{ url_for('static', filename='fruits.jpg') }}");
-    }
-  </style>
 </head>
 
 <body>
   {% if fruit_list %}
-  <h1> Please select: </h1>
+  <h1> Demo Flask App</h1>
+  <h2>Please Select:</h2>
   <form action="{{ url_for('checkout')}}" method="POST">
     <ul>
       {% for fruit in fruit_list %}
-      {{ fruit }}<input type="checkbox" value="{{ fruit }}" name="{{ fruit }}"><br>
+      {{ fruit }}<input type="checkbox" value="{{ fruit }}" name="fruit"><br>
       {% endfor %}
     </ul>
     <input type="submit">
@@ -27,7 +24,9 @@
   {% if selection %}
   <h2>Selected fruits:</h2>
   <ul>
-    {% for item in selection %}<li>{{ item }}</li>{% endfor %}
+    {% for item in selection %}
+    <li>{{ item }}</li>
+    {% endfor %}
   </ul>
 
   <a href="{{ url_for('index') }}"> Back to home</a>

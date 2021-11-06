@@ -1,4 +1,6 @@
 body {
-    margin: 5%;
-    font-size: 1.5em;
+    background: center / cover url("/static/fruits.jpg");
+    font-size: 1.4em;
+    margin: 5% auto;
+    width: 80%;
 }
