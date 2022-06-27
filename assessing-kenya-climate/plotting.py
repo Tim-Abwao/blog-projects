@@ -11,8 +11,6 @@ from utils import get_extremes, get_extremes_style
 with open("kenya_regions.geojson") as file:
     kenya_provinces = json.load(file)
 
-print(go.Figure)
-
 
 def customize_figure(fig: go.Figure) -> go.Figure:
     """Update the font style, plot background, axes labels, and more.
