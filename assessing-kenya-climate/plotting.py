@@ -1,28 +1,49 @@
-import plotly.graph_objects as go
-import plotly.express as px
-from utils import get_extremes, get_extremes_style
 import json
+
+import plotly.express as px
+import plotly.graph_objects as go
+from pandas import DataFrame, Series
 from plotly.subplots import make_subplots
 
+from utils import get_extremes, get_extremes_style
 
 # Load geo-json for maps
 with open("kenya_regions.geojson") as file:
     kenya_provinces = json.load(file)
 
+print(go.Figure)
 
-def customize_figure(fig):
+
+def customize_figure(fig: go.Figure) -> go.Figure:
+    """Update the font style, plot background, axes labels, and more.
+
+    Args:
+        fig (plotly.graph_objs._figure.Figure): Figure to edit.
+
+    Returns:
+        plotly.graph_objs._figure.Figure: Customized figure.
+    """
     fig.update_layout(
         font_family="serif",
         plot_bgcolor="#fff",
-        titlefont_size=18,
-        title_x=0.5,
+        titlefont=dict(size=18, color="#444"),
+        title_x=0.1,
     )
     fig.update_xaxes(fixedrange=True, title_font_size=16)
     fig.update_yaxes(fixedrange=True, title_font_size=16)
     return fig
 
 
-def customize_cartesian_plot(fig):
+def customize_cartesian_plot(fig: go.Figure) -> go.Figure:
+    """Update the hover-mode and margin specifically for cartesian plots e.g.
+    line-plots & bar-plots; further to `customize figure`.
+
+    Args:
+        fig (plotly.graph_objs._figure.Figure): Figure to edit.
+
+    Returns:
+        plotly.graph_objs._figure.Figure: Updated figure.
+    """
     fig = customize_figure(fig)
     fig.update_layout(
         hovermode="x unified",
@@ -32,33 +53,70 @@ def customize_cartesian_plot(fig):
 
 
 def comparative_bar(
-    data, title: str, unit: str, x_label, y_label: str, color_sequence: list
-):
+    data: DataFrame,
+    color_sequence: list,
+    title: str,
+    legend_title_text: str,
+    unit: str,
+    x_label: str,
+    y_label: str,
+) -> go.Figure:
+    """Create a comparative bar plot using the provided `data`.
+
+    Args:
+        data (pandas.DataFrame): Values to plot.
+        color_sequence (list): Colors to apply to groups.
+        title (str): Graph title.
+        legend_title_text (str): Title for the legend.
+        unit (str): Metric/empirical unit for values.
+        x_label (str): X-axis label.
+        y_label (str): Y-axis label.
+
+    Returns:
+        plotly.graph_objs._figure.Figure: A comparative bar plot.
+    """
     fig = px.bar(
         data,
         barmode="group",
         color_discrete_sequence=color_sequence,
     )
     fig.update_traces(hovertemplate=f"<b>%{{y:.1f}}{unit}</b>")
-    fig.update_layout(legend_title_text="Period", title=title)
+    fig.update_layout(legend_title_text=legend_title_text, title=title)
     fig.update_xaxes(title=x_label)
     fig.update_yaxes(title=f"{y_label} ({unit})")
     return customize_cartesian_plot(fig)
 
 
 def line_plot(
-    data,
-    title: str,
+    data: Series,
     line_color: str,
+    marker_colorscale: str,
     max_color: str,
     min_color: str,
-    marker_colorscale: str,
     hover_text: str,
+    title: str,
+    unit: str,
     x_label: str,
     y_label: str,
-    unit: str,
-):
+) -> go.Figure:
+    """Get a line-plot with extreme values highlighted, and a horizontal
+    dotted line at the average value.
 
+    Args:
+        data (pandas.Series): Values to plot.
+        line_color (str): Color for the line-plot.
+        marker_colorscale (str): Colorscale for marker values.
+        max_color (str): Color for the maximum value(s) marker & label.
+        min_color (str): Color for the minimum value(s) marker & label.
+        hover_text (str): Text to display on hover.
+        title (str): Graph title.
+        unit (str): Metric/empirical unit for values.
+        x_label (str): X-axis label.
+        y_label (str): Y-axis label.
+
+    Returns:
+        plotly.graph_objs._figure.Figure: A line-plot.
+    """
     fig = go.Figure(
         go.Scatter(
             x=data.index,
@@ -103,6 +161,7 @@ def line_plot(
         )
     )
 
+    # Add horizontal line at the mean value
     fig.add_hline(
         y=data.mean(),
         line_dash="dot",
@@ -115,7 +174,20 @@ def line_plot(
     return customize_cartesian_plot(fig)
 
 
-def choropleth_map(data, color_scale: str, title: str, unit: str):
+def choropleth_map(
+    data: Series, color_scale: str, title: str, unit: str
+) -> go.Figure:
+    """Get a choropleth map of Kenya's regions (provinces).
+
+    Args:
+        data (pandas.Series): Values to plot.
+        color_scale (str): Colorscale for values.
+        title (str): Graph title.
+        unit (str): Metric/empirical unit for values
+
+    Returns:
+        plotly.graph_objs._figure.Figure: A choropleth map.
+    """
     fig = px.choropleth(
         data,
         locations=data.index,
@@ -140,14 +212,26 @@ def choropleth_map(data, color_scale: str, title: str, unit: str):
         )
     )
     fig.update_layout(
-        margin={"r": 0, "t": 40, "l": 0, "b": 0},
         dragmode=False,
+        margin={"r": 0, "t": 40, "l": 0, "b": 0},
         title=title,
     )
     return customize_figure(fig)
 
 
-def climate_plot(precipitation_data, temperature_data):
+def climate_plot(
+    precipitation_data: DataFrame, temperature_data: DataFrame
+) -> go.Figure:
+    """Get a sub-plot pair of temperature(lines) and precipitation(bars) data
+    for periods 1961-1990 and 1991-2020.
+
+    Args:
+        precipitation_data (DataFrame): Precipitation climatology data.
+        temperature_data (DataFrame): Temperature climatology data.
+
+    Returns:
+        plotly.graph_objs._figure.Figure: Graph of climate data.
+    """
     fig = make_subplots(
         rows=2,
         shared_xaxes=True,
@@ -177,7 +261,6 @@ def climate_plot(precipitation_data, temperature_data):
             col=1,
         )
 
-    # Add figure title
     fig.update_layout(
         margin={"l": 60, "t": 60, "r": 10, "b": 10},
         showlegend=False,
@@ -186,8 +269,6 @@ def climate_plot(precipitation_data, temperature_data):
         xaxis2_title_text="Month",
     )
     fig.update_traces(hovertemplate="<b>%{x}</b>: %{y}")
-
-    # Set y-axes titles
     fig.update_yaxes(title_text="Precipitation (mm)", secondary_y=False)
     fig.update_yaxes(title_text="Temperature (&deg;C)", secondary_y=True)
     return customize_figure(fig)

@@ -1,29 +1,32 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 
-def aggregate_region_data(data, variable):
-    return (
-        data.mean()
-        .reset_index()
-        .rename(columns={"index": "region", 0: f"avg {variable}"})
-    )
+def get_extremes(data: pd.Series) -> pd.Series:
+    """Get the minimum and maximum values of the `data`.
 
-
-def get_extremes(series: pd.Series) -> pd.Series:
-    """Get the minimum and maximum values of the `series`.
-
-    Arguments:
-        series (pandas.Series): Data array.
+    Args:
+        data (pandas.Series): Data array.
 
     Returns:
         pandas.Series: An array of maximum and minimum values.
     """
-    extremes = series.agg([min, max])
-    return series[series.isin(extremes)]
+    extremes = data.agg([min, max])
+    return data[data.isin(extremes)]
 
 
 def get_extremes_style(
-    data: pd.Series, text_for_max: str = "Max", text_for_min: str = "Min"
+    data: pd.Series, if_max: str = "Max", if_min: str = "Min"
 ) -> np.ndarray:
-    return np.where(data == data.max(), text_for_max, text_for_min)
+    """Get an array of styles/colors/text based on if values in `data` are the
+    maximum or minimum.
+
+    Args:
+        data (pd.Series): Values to classify.
+        if_max (str, optional): Value for maximums. Defaults to "Max".
+        if_min (str, optional): Value for minimums. Defaults to "Min".
+
+    Returns:
+        np.ndarray: Array of values.
+    """
+    return np.where(data == data.max(), if_max, if_min)
