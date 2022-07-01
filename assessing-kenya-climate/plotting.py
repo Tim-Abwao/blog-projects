@@ -212,7 +212,7 @@ def choropleth_map(
     )
     fig.update_layout(
         dragmode=False,
-        margin={"r": 0, "t": 40, "l": 0, "b": 0},
+        margin={"r": 0, "t": 60, "l": 0, "b": 0},
         title=title,
     )
     return customize_figure(fig)
