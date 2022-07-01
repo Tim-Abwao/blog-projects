@@ -238,7 +238,7 @@ def climate_plot(
         subplot_titles=("1961-1990", "1991-2020"),
     )
 
-    for idx, period in enumerate(["1961_1990", "1991_2020"], start=1):
+    for idx, period in enumerate(["1961-1990", "1991-2020"], start=1):
         fig.add_trace(
             go.Bar(
                 x=precipitation_data[period].columns,
