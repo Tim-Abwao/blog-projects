@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import plotly.express as px
 import plotly.graph_objects as go
@@ -45,7 +46,7 @@ def customize_cartesian_plot(fig: go.Figure) -> go.Figure:
     fig = customize_figure(fig)
     fig.update_layout(
         hovermode="x unified",
-        margin={"l": 60, "t": 40, "r": 10, "b": 10},
+        margin={"l": 60, "t": 60, "r": 10, "b": 10},
     )
     return fig
 
@@ -270,3 +271,19 @@ def climate_plot(
     fig.update_yaxes(title_text="Precipitation (mm)", secondary_y=False)
     fig.update_yaxes(title_text="Temperature (&deg;C)", secondary_y=True)
     return customize_figure(fig)
+
+
+def savefig(fig: go.Figure, destination_dir: Path, filename: str) -> None:
+    """Write the figure to a html file named `filename` in the specified
+    `destination_dir`.
+
+    Args:
+        fig (plotly.graph_objs._figure.Figure): Figure to save.
+        destination_dir (Path): Folder to save the figure in.
+        filename (str): Desired file name for the saved figure.
+    """
+    fig.write_html(
+        destination_dir / filename,
+        config={"displayModeBar": False},
+        include_plotlyjs="cdn",
+    )
