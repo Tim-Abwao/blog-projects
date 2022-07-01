@@ -243,7 +243,9 @@ def climate_plot(
             go.Bar(
                 x=precipitation_data[period].columns,
                 y=precipitation_data[period].mean(),
+                marker_color="#55cc33",
                 name="Precipitation (1961-1990)",
+                opacity=0.8,
             ),
             secondary_y=False,
             row=idx,
@@ -253,6 +255,7 @@ def climate_plot(
             go.Scatter(
                 x=temperature_data[period].columns,
                 y=temperature_data[period].mean(),
+                marker_color="#ee5533",
                 name="Temperature (1961-1990)",
             ),
             secondary_y=True,
@@ -266,8 +269,12 @@ def climate_plot(
         title_text="Kenya's Climate",
         xaxis_showticklabels=True,
         xaxis2_title_text="Month",
+        yaxis_color="#55cc33",
+        yaxis2_color="#ee5533",
+        yaxis3_color="#55cc33",
+        yaxis4_color="#ee5533",
     )
-    fig.update_traces(hovertemplate="<b>%{x}</b>: %{y}")
+    fig.update_traces(hovertemplate="<b>%{x}</b>: %{y:,.2f}")
     fig.update_yaxes(title_text="Precipitation (mm)", secondary_y=False)
     fig.update_yaxes(title_text="Temperature (&deg;C)", secondary_y=True)
     return customize_figure(fig)
