@@ -21,14 +21,10 @@ def checkout() -> str:
     """Creates the checkout page that displays user input.
 
     Returns:
-        str: Rendered HTML
+        str: Rendered HTML.
     """
     if request.method == "POST":
-        basket = request.form.getlist("fruit")
-
-        if not basket:
-            basket = ["No fruits selected."]
-
+        basket = request.form.getlist("fruit") or ["No fruits selected."]
         return render_template("fruits.html", selection=basket)
 
     return redirect(url_for("index"))
