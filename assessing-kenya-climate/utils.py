@@ -11,7 +11,7 @@ def get_extremes(data: pd.Series) -> pd.Series:
     Returns:
         pandas.Series: An array of maximum and minimum values.
     """
-    extremes = data.agg([min, max])
+    extremes = data.agg(["min", "max"])
     return data[data.isin(extremes)]
 
 
